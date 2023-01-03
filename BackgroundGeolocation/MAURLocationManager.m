@@ -193,6 +193,10 @@ static NSString *const Domain = @"com.marianhello";
     return locationManager.desiredAccuracy;
 }
 
+- (void) allowDeferredLocationUpdatesUntilTraveled:(CLLocationDistance)distance timeout:(NSTimeInterval)timeout
+{
+    [locationManager allowDeferredLocationUpdatesUntilTraveled:distance timeout:timeout];
+}
 
 #pragma mark -
 #pragma mark CLLocationManagerDelegate Methods

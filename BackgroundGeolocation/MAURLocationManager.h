@@ -47,6 +47,7 @@
 - (CLActivityType) activityType;
 - (void) setDesiredAccuracy:(CLLocationAccuracy)newDesiredAccuracy;
 - (CLLocationAccuracy) desiredAccuracy;
+- (void)allowDeferredLocationUpdatesUntilTraveled:(CLLocationDistance)distance timeout:(NSTimeInterval)timeout;
 
 + (MAURLocationManager*)sharedInstance; // Singleton method
 

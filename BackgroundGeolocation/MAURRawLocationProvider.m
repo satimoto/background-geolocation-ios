@@ -89,9 +89,9 @@ static NSString * const Domain = @"com.marianhello";
     DDLogDebug(@"%@ didUpdateLocations", TAG);
 
     if (!didDeferredLocationError) {
-        CLLocationDistance deferredDistance = _config.distanceFilter.integerValue // meters
-        NSInteger deferredInterval = _config.interval.integerValue / 1000 // seconds
-        [locationManager allowDeferredLocationUpdatesUntilTraveled:deferredDistance timeout:deferredInterval]
+        CLLocationDistance deferredDistance = _config.distanceFilter.integerValue; // meters
+        NSInteger deferredInterval = _config.interval.integerValue / 1000; // seconds
+        [locationManager allowDeferredLocationUpdatesUntilTraveled:deferredDistance timeout:deferredInterval];
     }
 
     for (CLLocation *location in locations) {
@@ -102,8 +102,10 @@ static NSString * const Domain = @"com.marianhello";
 
 - (void) locationManager:(CLLocationManager *)manager didFinishDeferredUpdatesWithError:(NSError *)error
 {
-    didDeferredLocationError = YES;
-    [self.delegate onError:error];
+    if (error != nil) {
+        didDeferredLocationError = YES;
+        [self.delegate onError:error];
+    }
 }
 
 - (void) onTerminate
