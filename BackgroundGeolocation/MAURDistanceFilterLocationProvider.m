@@ -85,7 +85,7 @@ enum {
 {
     DDLogVerbose(@"%@ configure", TAG);
     _config = config;
-
+    
     locationManager.pausesLocationUpdatesAutomatically = [_config pauseLocationUpdates];
     locationManager.activityType = [_config decodeActivityType];
     locationManager.distanceFilter = _config.distanceFilter.integerValue; // meters
@@ -220,7 +220,6 @@ enum {
             [self switchMode:operationMode];
         }
     }
-    
     
     MAURLocation *bestLocation = nil;
     for (CLLocation *location in locations) {

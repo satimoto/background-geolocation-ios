@@ -23,6 +23,7 @@ enum {
 @property NSNumber *distanceFilter;
 @property NSNumber *desiredAccuracy;
 @property NSNumber *_debug;
+@property NSNumber *interval;
 @property NSString *activityType;
 @property NSNumber *activitiesInterval;
 @property NSNumber *_stopOnTerminate;
@@ -45,6 +46,7 @@ enum {
 - (BOOL) hasDistanceFilter;
 - (BOOL) hasDesiredAccuracy;
 - (BOOL) hasDebug;
+- (BOOL) hasInterval;
 - (BOOL) hasActivityType;
 - (BOOL) hasStopOnTerminate;
 - (BOOL) hasUrl;

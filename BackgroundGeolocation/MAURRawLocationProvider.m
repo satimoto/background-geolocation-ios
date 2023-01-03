@@ -17,6 +17,7 @@ static NSString * const Domain = @"com.marianhello";
 @implementation MAURRawLocationProvider {
 
     BOOL isStarted;
+    BOOL didDeferredLocationError;
     MAURLocationManager *locationManager;
     
     MAURConfig *_config;
@@ -28,6 +29,7 @@ static NSString * const Domain = @"com.marianhello";
 
     if (self) {
         isStarted = NO;
+        didDeferredLocationError = NO;
     }
 
     return self;
@@ -42,6 +44,7 @@ static NSString * const Domain = @"com.marianhello";
 {
     DDLogVerbose(@"%@ configure", TAG);
     _config = config;
+    didDeferredLocationError = NO;
 
     locationManager.pausesLocationUpdatesAutomatically = [config pauseLocationUpdates];
     locationManager.activityType = [config decodeActivityType];
@@ -74,10 +77,33 @@ static NSString * const Domain = @"com.marianhello";
     [locationManager stopMonitoringSignificantLocationChanges];
     if ([locationManager stop:outError]) {
         isStarted = NO;
+        didDeferredLocationError = NO;
         return YES;
     }
 
     return NO;
+}
+
+- (void) locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
+{
+    DDLogDebug(@"%@ didUpdateLocations", TAG);
+
+    if (!didDeferredLocationError) {
+        CLLocationDistance deferredDistance = _config.distanceFilter.integerValue // meters
+        NSInteger deferredInterval = _config.interval.integerValue / 1000 // seconds
+        [locationManager allowDeferredLocationUpdatesUntilTraveled:deferredDistance timeout:deferredInterval]
+    }
+
+    for (CLLocation *location in locations) {
+        MAURLocation *bgloc = [MAURLocation fromCLLocation:location];
+        [super.delegate onLocationChanged:bgloc];
+    }
+}
+
+- (void) locationManager:(CLLocationManager *)manager didFinishDeferredUpdatesWithError:(NSError *)error
+{
+    didDeferredLocationError = YES;
+    [self.delegate onError:error];
 }
 
 - (void) onTerminate
@@ -90,14 +116,6 @@ static NSString * const Domain = @"com.marianhello";
 - (void) onAuthorizationChanged:(MAURLocationAuthorizationStatus)authStatus
 {
     [self.delegate onAuthorizationChanged:authStatus];
-}
-
-- (void) onLocationsChanged:(NSArray*)locations
-{
-    for (CLLocation *location in locations) {
-        MAURLocation *bgloc = [MAURLocation fromCLLocation:location];
-        [self.delegate onLocationChanged:bgloc];
-    }
 }
 
 - (void) onError:(NSError*)error
